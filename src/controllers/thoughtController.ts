@@ -1,7 +1,7 @@
 import { User, Thought } from "../models/index.js";
 import { Request, Response } from "express";
 
-// get all thoughts /thoughts
+// get all thoughts GET /thoughts
 export const getThoughts = async (_req: Request, res: Response) => {
   try {
     const thoughts = await Thought.find();
@@ -11,7 +11,7 @@ export const getThoughts = async (_req: Request, res: Response) => {
   }
 };
 
-// get thought by id /thoughts/:thoughtId
+// get a single thought by id GET /thoughts/:thoughtId
 export const getThoughtById = async (
   req: Request,
   res: Response
@@ -33,7 +33,7 @@ export const getThoughtById = async (
   }
 };
 
-// create new thought /thoughts
+// create new thought POST /thoughts
 export const createThought = async (
   req: Request,
   res: Response
@@ -58,7 +58,7 @@ export const createThought = async (
   }
 };
 
-// update thought by id /thoughts/:thoughtId
+// update thought by id PUT /thoughts/:thoughtId
 export const updateThought = async (
   req: Request,
   res: Response
@@ -80,7 +80,7 @@ export const updateThought = async (
   }
 };
 
-// delete thought by id /thoughts/:thoughtId
+// delete thought by id DELETE /thoughts/:thoughtId
 export const deleteThought = async (
   req: Request,
   res: Response
@@ -101,7 +101,7 @@ export const deleteThought = async (
   }
 };
 
-// add reaction to thought
+// create a reaction stored in a single thought's reactions array POST /thoughts/:thoughtId/reactions
 export const addThoughtReaction = async (
   req: Request,
   res: Response
@@ -123,7 +123,7 @@ export const addThoughtReaction = async (
   }
 };
 
-// delete reaction from thought
+// delete a reaction by reactionId value DELETE /thoughts/:thoughtId/reactions/:reactionId
 export const deleteThoughtReaction = async (
   req: Request,
   res: Response
@@ -139,7 +139,8 @@ export const deleteThoughtReaction = async (
     }
     res.json(thought);
     return;
-  } catch (err) {
+  }
+  catch (err) {
     res.status(500).json(err);
     return;
   }
