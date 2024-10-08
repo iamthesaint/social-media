@@ -2,12 +2,12 @@ import { ObjectId } from "bson";
 import moment from "moment";
 
 const getRandomDate = () => {
-    const randomNumberOfDays = Math.floor(Math.random() * 5) + 1;
-    const currentDate = new Date();
-    const randomDate = new Date(
-        currentDate.setDate(currentDate.getDate() - randomNumberOfDays)
-    );
-    return randomDate;
+  const randomNumberOfDays = Math.floor(Math.random() * 5) + 1;
+  const currentDate = new Date();
+  const randomDate = new Date(
+    currentDate.setDate(currentDate.getDate() - randomNumberOfDays)
+  );
+  return randomDate;
 };
 
 const dbUserData = [
@@ -79,6 +79,30 @@ const dbUserData = [
     _id: new ObjectId(),
     username: "byakuya",
     email: "bkuchiki@kuchikiclan.com",
+    thoughts: [],
+    friends: [],
+    createdAt: new Date(getRandomDate()),
+  },
+  {
+    _id: new ObjectId(),
+    username: "tanjiro_slayer",
+    email: "tanjiro@demonslayer.com",
+    thoughts: [],
+    friends: [],
+    createdAt: new Date(getRandomDate()),
+  },
+  {
+    _id: new ObjectId(),
+    username: "eren_yeager",
+    email: "eren@attackot.com",
+    thoughts: [],
+    friends: [],
+    createdAt: new Date(getRandomDate()),
+  },
+  {
+    _id: new ObjectId(),
+    username: "orihime",
+    email: "inoue@ss.com",
     thoughts: [],
     friends: [],
     createdAt: new Date(getRandomDate()),
@@ -159,6 +183,13 @@ const dbThoughtData = [
     reactions: [],
     createdAt: new Date(new Date().setDate(new Date().getDate() - 4)),
   },
+  {
+    _id: new ObjectId(),
+    thoughtText: "I'd do anything for him!",
+    username: "orihime",
+    reactions: [],
+    createdAt: new Date(new Date().setDate(new Date().getDate() - 1)),
+  },
 ];
 
 const dbReactionData = [
@@ -203,31 +234,43 @@ const dbReactionData = [
     reactionBody: "I am justice!",
     username: "light_yagami",
     createdAt: new Date(getRandomDate()),
-},
+  },
   {
     reactionId: new ObjectId(),
     reactionBody: `I know what's going to happen next.`,
     username: "satoru",
     createdAt: new Date(getRandomDate()),
-},
+  },
   {
     reactionId: new ObjectId(),
     reactionBody: "I am the most powerful!",
     username: "byakuya",
     createdAt: new Date(getRandomDate()),
-},
+  },
   {
     reactionId: new ObjectId(),
     reactionBody: "I am the fastest!",
     username: "saitama",
     createdAt: new Date(getRandomDate()),
-},
+  },
   {
     reactionId: new ObjectId(),
     reactionBody: "I am hokage!",
     username: "naruto_uzumaki",
     createdAt: new Date(getRandomDate()),
-},
+  },
+  {
+    reactionId: new ObjectId(),
+    reactionBody: "You're the best!",
+    username: "orihime",
+    createdAt: new Date(getRandomDate()),
+  },
+  {
+    reactionId: new ObjectId(),
+    reactionBody: "YES!",
+    username: "eren_yeager",
+    createdAt: new Date(getRandomDate()),
+  },
 ];
 
 // associate reactions with thoughts
@@ -240,6 +283,8 @@ dbThoughtData[5].reactions.push(dbReactionData[9]);
 dbThoughtData[6].reactions.push(dbReactionData[5]);
 dbThoughtData[7].reactions.push(dbReactionData[8]);
 dbThoughtData[8].reactions.push(dbReactionData[6]);
+dbThoughtData[9].reactions.push(dbReactionData[7]);
+dbThoughtData[10].reactions.push(dbReactionData[11]);
 
 // get a random item given an array
 export const getRandom = (arr: any[]) => {
@@ -251,18 +296,19 @@ export const getRandom = (arr: any[]) => {
 export const getRandomUser = () => getRandom(dbUserData);
 
 // add random friends to a user
-export const addRandomFriends = (user: {
-  _id: ObjectId;
-  friends: ObjectId[];
-}) => {
-  const randomUser = getRandomUser();
-  if (randomUser._id !== user._id && !user.friends.includes(randomUser._id)) {
-    user.friends.push(randomUser._id);
+export const addRandomFriends = (user: { _id: ObjectId; friends: ObjectId[] }, numFriends: number) => {
+  for (let i = 0; i < numFriends; i++) {
+    const randomUser = getRandomUser();
+    if (randomUser._id !== user._id && !user.friends.includes(randomUser._id)) {
+      user.friends.push(randomUser._id);
+    }
   }
 };
 
-// add random friends to each user
-dbUserData.forEach(addRandomFriends);
+// add 3 random friends to each user
+const numFriendsToAdd = 3; 
+dbUserData.forEach(user => addRandomFriends(user, numFriendsToAdd));
+
 
 console.table(
   dbUserData.map((user) => ({
