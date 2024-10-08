@@ -18,13 +18,24 @@ export const getSingleUser = async (req: Request, res: Response) => {
     const userId = req.params.userId;
     const user = await User.findOne({ _id: userId })
       .populate({ path: "thoughts", select: "-__v" })
-      .populate({ path: "friends", select: "-__v" })
+      .populate({ path: "friends", select: "-__v username" })
       .select("-__v");
     if (!user) {
       res.status(404).json({ message: "No user found with this id!" });
       return;
     }
-    res.json(user);
+    const friendsWithNames = user.friends.map((friend: any) => ({
+      id: friend._id.toString(),
+      name: friend.username,
+    }));
+
+    res.json({
+      id: user._id,
+      username: user.username,
+      email: user.email,
+      friends: friendsWithNames,
+      thoughts: user.thoughts,
+    });
   } catch (err) {
     res.status(400).json(err);
   }
@@ -55,7 +66,7 @@ export const updateUser = async (req: Request, res: Response) => {
   } catch (err) {
     res.status(400).json(err);
   }
-}
+};
 
 // delete a user by id DELETE /api/users/:userId, including associated thoughts
 export const deleteUser = async (req: Request, res: Response) => {
@@ -67,7 +78,9 @@ export const deleteUser = async (req: Request, res: Response) => {
       return;
     }
     // delete users associated thoughts
-    const deletedThoughts = await Thought.deleteMany({ _id: { $in: deleted.thoughts } });
+    const deletedThoughts = await Thought.deleteMany({
+      _id: { $in: deleted.thoughts },
+    });
     if (!deletedThoughts) {
       res.status(404).json({ message: "No thought found with this id!" });
       return;
@@ -76,7 +89,7 @@ export const deleteUser = async (req: Request, res: Response) => {
   } catch (err) {
     res.status(400).json(err);
   }
-}
+};
 
 // add a new friend to a user's friend list POST /api/users/:userId/friends/:friendId
 export const addFriend = async (req: Request, res: Response) => {
@@ -84,7 +97,9 @@ export const addFriend = async (req: Request, res: Response) => {
     const userId = req.params.userId;
     const friendId = req.params.friendId;
     if (userId === friendId) {
-      res.status(400).json({ message: "Unfortunately, you cannot be your own friend!" });
+      res
+        .status(400)
+        .json({ message: "Unfortunately, you cannot be your own friend!" });
       return;
     }
     const updatedUser = await User.findOneAndUpdate(
@@ -120,5 +135,4 @@ export const removeFriend = async (req: Request, res: Response) => {
   } catch (err) {
     res.status(500).json(err);
   }
-}
-
+};

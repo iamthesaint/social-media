@@ -190,6 +190,13 @@ const dbThoughtData = [
     reactions: [],
     createdAt: new Date(new Date().setDate(new Date().getDate() - 1)),
   },
+  {
+    _id: new ObjectId(),
+    thoughtText: "I'll get them all!",
+    username: "eren_yeager",
+    reactions: [],
+    createdAt: new Date(new Date().setDate(new Date().getDate() - 3)),
+  },
 ];
 
 const dbReactionData = [
@@ -269,6 +276,12 @@ const dbReactionData = [
     reactionId: new ObjectId(),
     reactionBody: "YES!",
     username: "eren_yeager",
+    createdAt: new Date(getRandomDate()),
+  },
+  {
+    reactionId: new ObjectId(),
+    reactionBody: "I am a hero!",
+    username: "saitama",
     createdAt: new Date(getRandomDate()),
   },
 ];
