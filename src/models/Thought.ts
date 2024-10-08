@@ -1,11 +1,11 @@
 import { Schema, model } from 'mongoose';
-import Reaction from './Reaction.js';
+import reactionSchema, { IReaction } from './Reaction.js';
 
 interface IThought {
     thoughtText: string;
     createdAt: Date;
     username: string;
-    reactions: Response[];
+    reactions: IReaction[];
 }
 
 const thoughtSchema = new Schema<IThought>(
@@ -25,7 +25,7 @@ const thoughtSchema = new Schema<IThought>(
         type: String,
         required: true,
     },
-    reactions: [Reaction],
+    reactions: [reactionSchema],
 },
 {
     toJSON: {

@@ -4,7 +4,7 @@ import { Request, Response } from "express";
 // get all thoughts GET /thoughts
 export const getThoughts = async (_req: Request, res: Response) => {
   try {
-    const thoughts = await Thought.find();
+    const thoughts = await Thought.find().populate("reactions");
     res.json(thoughts);
   } catch (err) {
     res.status(500).json(err);
@@ -18,7 +18,7 @@ export const getThoughtById = async (
 ): Promise<void> => {
   const { thoughtId } = req.params;
   try {
-    const user = await Thought.findById(thoughtId);
+    const user = await Thought.findById(thoughtId).populate("reactions");
     if (user) {
       res.json(user);
     } else {
@@ -139,8 +139,7 @@ export const deleteThoughtReaction = async (
     }
     res.json(thought);
     return;
-  }
-  catch (err) {
+  } catch (err) {
     res.status(500).json(err);
     return;
   }

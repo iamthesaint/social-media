@@ -11,8 +11,8 @@ interface IUser extends Document {
 // define user schema
 const userSchema = new Schema<IUser>(
  {
-  username: String,
-  email: String,
+  username: { type: String, required: true, unique: true, trim: true },
+  email: { type: String, required: true, unique: true, match: [/.+\@.+\..+/, 'Please enter a valid email address'] },
   thoughts: [
    {
     type: Schema.Types.ObjectId,

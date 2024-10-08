@@ -5,7 +5,7 @@ import {
   getSingleUser,
   createUser,
   updateUser,
-} from "../../controllers/userController";
+} from "../../controllers/userController.js";
 
 // /api/users
 router
