@@ -1,16 +1,14 @@
 {
   "name": "social-media",
   "version": "1.0.0",
-  "description": "",
-  "main": "server.js",
+  "description": "social media app with express and mongoose",
+ "main": "server.js",
   "type": "module",
   "scripts": {
     "build": "npx tsc",
-    "start": "node dist/server.js",
-    "test": "echo \"Error: no test specified\" && exit 1",
-    "seed": "node dist/seeds/index.js",
-    "render-build": "npm install && npm run build",
-    "render-start": "npm run seed && npm run start"
+    "start": "npm run build && node dist/server.js",
+    "seed": "npm run build && node  dist/utils/seed.js",
+    "test": "echo \"Error: no test specified\" && exit 1"
   },
   "keywords": [],
   "author": "",

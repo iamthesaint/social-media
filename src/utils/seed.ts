@@ -1,8 +1,8 @@
 import mongoose from 'mongoose';
 import { dbUserData, dbThoughtData } from './data.js';
-import User from '../src/models/User.js';
-import Thought from '../src/models/Thought.js';
-import db from '../src/config/connection.js';
+import User from '../models/User.js';
+import Thought from '../models/Thought.js';
+import db from '../config/connection.js';
 
 // seed the database
 const seedDatabase = async () => {
