@@ -6,21 +6,22 @@ import { Request, Response } from "express";
 export const getUsers = async (_req: Request, res: Response) => {
   try {
     const users = await User.find()
-    .populate({ path: "thoughts", select: "thoughtText -__v" })
-    .populate({ path: "friends", select: "username -__v" });
+      .populate({ path: "thoughts", select: "thoughtText" })
+      .populate({ path: "friends", select: "username" })
+      .select("-__v");
     res.json(users);
   } catch (err) {
     res.status(500).json(err);
   }
-};
+}
 
 // get single user by id, including thought and friend data GET /api/users/:userId
 export const getSingleUser = async (req: Request, res: Response) => {
   try {
     const userId = req.params.userId;
     const user = await User.findOne({ _id: userId })
-      .populate({ path: "thoughts", select: "thoughtText -__v" })
-      .populate({ path: "friends", select: "username -__v" })
+      .populate({ path: "thoughts", select: "thoughtText" })
+      .populate({ path: "friends", select: "username" })
       .select("-__v");
     if (!user) {
       res.status(404).json({ message: "No user found with this id!" });
@@ -109,7 +110,7 @@ export const addFriend = async (req: Request, res: Response) => {
       { $addToSet: { friends: friendId } },
       { new: true }
     )
-      .populate({ path: "friends", select: "username -__v" })
+      .populate({ path: "friends", select: "username" })
       .select("-__v");
     if (!updatedUser) {
       res.status(404).json({ message: "No user found with this id!" });
