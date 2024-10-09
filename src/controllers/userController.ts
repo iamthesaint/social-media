@@ -9,19 +9,28 @@ export const getUsers = async (_req: Request, res: Response) => {
       .populate({ path: "thoughts", select: "thoughtText" })
       .populate({ path: "friends", select: "username" })
       .select("-__v");
-    res.json(users);
+
+      // manually adding friendCount to each user object
+      const usersWithFriendCount = users.map((user => {
+        const userObj = user.toObject();
+        userObj.friendCount = user.friends.length;
+        return userObj;
+      }));
+
+    res.json(usersWithFriendCount);
   } catch (err) {
-    res.status(500).json(err);
+    console.error('Error fetching users:', err); 
+    res.status(500).json({ message: 'Internal Server Error', error: err });
   }
-}
+};
 
 // get single user by id, including thought and friend data GET /api/users/:userId
 export const getSingleUser = async (req: Request, res: Response) => {
   try {
     const userId = req.params.userId;
     const user = await User.findOne({ _id: userId })
-      .populate({ path: "thoughts", select: "thoughtText" })
-      .populate({ path: "friends", select: "username" })
+      .populate({ path: "thoughts", select: "thoughtText" }) 
+      .populate({ path: "friends", select: "username" }) 
       .select("-__v");
     if (!user) {
       res.status(404).json({ message: "No user found with this id!" });
@@ -38,6 +47,7 @@ export const getSingleUser = async (req: Request, res: Response) => {
       email: user.email,
       friends: friendsWithNames,
       thoughts: user.thoughts,
+      friendCount: user.friendCount
     });
   } catch (err) {
     res.status(400).json(err);
@@ -80,6 +90,7 @@ export const deleteUser = async (req: Request, res: Response) => {
       res.status(404).json({ message: "No user found with this id!" });
       return;
     }
+
     // delete users associated thoughts
     const deletedThoughts = await Thought.deleteMany({
       _id: { $in: deleted.thoughts },
@@ -110,8 +121,6 @@ export const addFriend = async (req: Request, res: Response) => {
       { $addToSet: { friends: friendId } },
       { new: true }
     )
-      .populate({ path: "friends", select: "username" })
-      .select("-__v");
     if (!updatedUser) {
       res.status(404).json({ message: "No user found with this id!" });
       return;
