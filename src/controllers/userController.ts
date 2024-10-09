@@ -10,17 +10,17 @@ export const getUsers = async (_req: Request, res: Response) => {
       .populate({ path: "friends", select: "username" })
       .select("-__v");
 
-      // manually adding friendCount to each user object
-      const usersWithFriendCount = users.map((user => {
-        const userObj = user.toObject();
-        userObj.friendCount = user.friends.length;
-        return userObj;
-      }));
+    // manually adding friendCount to each user object
+    const usersWithFriendCount = users.map((user) => {
+      const userObj = user.toObject();
+      userObj.friendCount = user.friends.length;
+      return userObj;
+    });
 
     res.json(usersWithFriendCount);
   } catch (err) {
-    console.error('Error fetching users:', err); 
-    res.status(500).json({ message: 'Internal Server Error', error: err });
+    console.error("Error fetching users:", err);
+    res.status(500).json({ message: "Internal Server Error", error: err });
   }
 };
 
@@ -29,8 +29,8 @@ export const getSingleUser = async (req: Request, res: Response) => {
   try {
     const userId = req.params.userId;
     const user = await User.findOne({ _id: userId })
-      .populate({ path: "thoughts", select: "thoughtText" }) 
-      .populate({ path: "friends", select: "username" }) 
+      .populate({ path: "thoughts", select: "thoughtText" })
+      .populate({ path: "friends", select: "username" })
       .select("-__v");
     if (!user) {
       res.status(404).json({ message: "No user found with this id!" });
@@ -47,7 +47,7 @@ export const getSingleUser = async (req: Request, res: Response) => {
       email: user.email,
       friends: friendsWithNames,
       thoughts: user.thoughts,
-      friendCount: user.friendCount
+      friendCount: user.friendCount,
     });
   } catch (err) {
     res.status(400).json(err);
@@ -120,7 +120,7 @@ export const addFriend = async (req: Request, res: Response) => {
       { _id: userId },
       { $addToSet: { friends: friendId } },
       { new: true }
-    )
+    ).populate({ path: "friends", select: "username" });
     if (!updatedUser) {
       res.status(404).json({ message: "No user found with this id!" });
       return;
@@ -144,7 +144,7 @@ export const removeFriend = async (req: Request, res: Response) => {
       { _id: userId },
       { $pull: { friends: friendId } },
       { new: true }
-    );
+    ).populate({ path: "friends", select: "username" });
     if (!updated) {
       res.status(404).json({ message: "No user found with this id!" });
       return;
