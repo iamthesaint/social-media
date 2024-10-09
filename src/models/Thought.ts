@@ -1,11 +1,13 @@
-import { Schema, model } from 'mongoose';
+import { Schema, model, Document } from 'mongoose';
 import reactionSchema, { IReaction } from './Reaction.js';
+import moment from 'moment';
 
-interface IThought {
+interface IThought extends Document {
     thoughtText: string;
     createdAt: Date;
     username: string;
     reactions: IReaction[];
+    reactionCount: number; // virtual property
 }
 
 const thoughtSchema = new Schema<IThought>(
@@ -16,10 +18,13 @@ const thoughtSchema = new Schema<IThought>(
         minlength: 1,
         maxlength: 280,
     },
+    // @ts-expect-error
     createdAt: {
         type: Date,
         default: Date.now,
-        get: (createdAtVal: Date) => createdAtVal,
+        get: function(createdAtVal: Date): string {
+            return moment(createdAtVal).format('MMM DD, YYYY [at] hh:mm a');
+        },
     },
     username: {
         type: String,

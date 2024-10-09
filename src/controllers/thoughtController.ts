@@ -101,6 +101,26 @@ export const deleteThought = async (
   }
 };
 
+// get all reactions stored in a single thought's reactions array GET /thoughts/:thoughtId/reactions
+export const getThoughtReactions = async (
+  req: Request,
+  res: Response
+): Promise<void> => {
+  try {
+    const thought = await Thought.findById(req.params.thoughtId);
+    if (!thought) {
+      res.status(404).json({ message: "No thought found with this id!" });
+      return;
+    }
+    res.json(thought.reactions);
+    return;
+  } catch (err) {
+    res.status(500).json(err);
+    return;
+  }
+};
+
+
 // create a reaction stored in a single thought's reactions array POST /thoughts/:thoughtId/reactions
 export const addThoughtReaction = async (
   req: Request,
@@ -121,7 +141,7 @@ export const addThoughtReaction = async (
     res.status(500).json(err);
     return;
   }
-};
+}
 
 // delete a reaction by reactionId value DELETE /thoughts/:thoughtId/reactions/:reactionId
 export const deleteThoughtReaction = async (

@@ -6,6 +6,9 @@ import {
   createThought,
   updateThought,
   deleteThought,
+  addThoughtReaction,
+  deleteThoughtReaction,
+  getThoughtReactions
 } from "../../controllers/thoughtController.js";
 
 // /api/thoughts
@@ -24,7 +27,12 @@ router
 // /api/thoughts/:thoughtId/reactions
 router
   .route("/:thoughtId/reactions")
-  .post() // POST to create a reaction stored in a single thought's reactions array
-  .delete(); // DELETE to pull and remove a reaction by the reaction's reactionId value
+  .get(getThoughtReactions) // GET all reactions stored in a single thought's reactions array
+  .post(addThoughtReaction) // POST to create a reaction stored in a single thought's reactions array
+
+// /api/thoughts/:thoughtId/reactions/:reactionId
+router
+  .route("/:thoughtId/reactions/:reactionId")
+  .delete(deleteThoughtReaction); // DELETE to pull and remove a reaction by the reaction's reactionId value
 
 export { router as thoughtRoutes };

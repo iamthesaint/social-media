@@ -1,4 +1,5 @@
 import { Schema, Document, ObjectId, Types } from 'mongoose';
+import moment from 'moment';
 
 export interface IReaction extends Document {
     reactionId: ObjectId;
@@ -22,10 +23,11 @@ const reactionSchema = new Schema<IReaction>(
             type: String,
             required: true,
         },
+        // @ts-expect-error
         createdAt: {
             type: Date,
             default: Date.now,
-            get: (createdAtVal: Date) => createdAtVal,
+            get: (createdAtVal: Date): string => moment(createdAtVal).format('MMM DD, YYYY [at] hh:mm a'),
         },
     },
     {

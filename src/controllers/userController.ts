@@ -5,7 +5,9 @@ import { Request, Response } from "express";
 // get all users GET /api/users
 export const getUsers = async (_req: Request, res: Response) => {
   try {
-    const users = await User.find();
+    const users = await User.find()
+    .populate({ path: "thoughts", select: "thoughtText -__v" })
+    .populate({ path: "friends", select: "username -__v" });
     res.json(users);
   } catch (err) {
     res.status(500).json(err);
@@ -17,8 +19,8 @@ export const getSingleUser = async (req: Request, res: Response) => {
   try {
     const userId = req.params.userId;
     const user = await User.findOne({ _id: userId })
-      .populate({ path: "thoughts", select: "-__v" })
-      .populate({ path: "friends", select: "-__v username" })
+      .populate({ path: "thoughts", select: "thoughtText -__v" })
+      .populate({ path: "friends", select: "username -__v" })
       .select("-__v");
     if (!user) {
       res.status(404).json({ message: "No user found with this id!" });
@@ -106,12 +108,18 @@ export const addFriend = async (req: Request, res: Response) => {
       { _id: userId },
       { $addToSet: { friends: friendId } },
       { new: true }
-    );
+    )
+      .populate({ path: "friends", select: "username -__v" })
+      .select("-__v");
     if (!updatedUser) {
       res.status(404).json({ message: "No user found with this id!" });
       return;
     }
-    res.json(updatedUser);
+    const friends = updatedUser.friends.map((friend: any) => ({
+      id: friend._id,
+      username: friend.username,
+    }));
+    res.json({ ...updatedUser.toObject(), friends });
   } catch (err) {
     res.status(500).json(err);
   }

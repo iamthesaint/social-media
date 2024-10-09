@@ -286,19 +286,6 @@ const dbReactionData = [
   },
 ];
 
-// associate reactions with thoughts
-dbThoughtData[0].reactions.push(dbReactionData[0]);
-dbThoughtData[1].reactions.push(dbReactionData[4]);
-dbThoughtData[2].reactions.push(dbReactionData[1]);
-dbThoughtData[3].reactions.push(dbReactionData[3]);
-dbThoughtData[4].reactions.push(dbReactionData[2]);
-dbThoughtData[5].reactions.push(dbReactionData[9]);
-dbThoughtData[6].reactions.push(dbReactionData[5]);
-dbThoughtData[7].reactions.push(dbReactionData[8]);
-dbThoughtData[8].reactions.push(dbReactionData[6]);
-dbThoughtData[9].reactions.push(dbReactionData[7]);
-dbThoughtData[10].reactions.push(dbReactionData[11]);
-
 // get a random item given an array
 export const getRandom = (arr: any[]) => {
   const randIndex = Math.floor(Math.random() * arr.length);
@@ -322,7 +309,18 @@ export const addRandomFriends = (user: { _id: ObjectId; friends: ObjectId[] }, n
 const numFriendsToAdd = 3; 
 dbUserData.forEach(user => addRandomFriends(user, numFriendsToAdd));
 
+const getRandomReaction = (thoughtUsername: string) => {
+  const filteredReactions = dbReactionData.filter(reaction => reaction.username !== thoughtUsername);
+  return getRandom(filteredReactions);
+};
 
+// add reactions to thoughts making sure they are not from the same user
+dbThoughtData.forEach(thought => {
+  const randomReaction = getRandomReaction(thought.username);
+  thought.reactions.push(randomReaction);
+});
+
+// log the data in table form
 console.table(
   dbUserData.map((user) => ({
     ...user,
