@@ -9,7 +9,7 @@ A social networking app utilizing MongoDB.
 - [Usage](#usage)
 - [License](#license)
 - [Questions](#questions)
-- 
+  
 ## Installation
 Express.js and Mongoose packages
 
